@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Column {
+  cards     Card[]
+  createdAt DateTime @default(now())
+  guid      String?
+  id        String   @id @default(cuid())
+  name      String?
+  position  Int?
+  room      Room?    @relation(fields: [roomId], references: [id])
+  roomId    String?
+  updatedAt DateTime @updatedAt
+}
+
+model Card {
+  author    String?
+  column    Column?  @relation(fields: [columnId], references: [id])
+  columnId  String?
+  createdAt DateTime @default(now())
+  guid      String?
+  id        String   @id @default(cuid())
+  text      String?
+  updatedAt DateTime @updatedAt
+  voters    Json?
+  votes     Int?
+}
+
+model Room {
+  columns   Column[]
+  createdAt DateTime @default(now())
+  guid      String?
+  id        String   @id @default(cuid())
+  name      String?
+  stages    Stage[]
+  updatedAt DateTime @updatedAt
+  users     Json?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?
+  googleId  String?
+  guid      String?
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Stage {
+  createdAt   DateTime @default(now())
+  description String?
+  guid        String?
+  id          String   @id @default(cuid())
+  name        String?
+  position    Int?
+  room        Room?    @relation(fields: [roomId], references: [id])
+  roomId      String?
+  stageOrder  Int?
+  updatedAt   DateTime @updatedAt
+}
+
+model Note {
+  assignee  String?
+  createdAt DateTime  @default(now())
+  deadline  DateTime?
+  guid      String?
+  id        String    @id @default(cuid())
+  text      String?
+  updatedAt DateTime  @updatedAt
+}
